@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACK RUSSIA — Тест на знание правил</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111;
+    --card: #161616;
+    --border: #2a2a2a;
+    --accent: #e63946;
+    --accent2: #ff6b35;
+    --gold: #ffd700;
+    --text: #e8e8e8;
+    --muted: #888;
+    --green: #2ecc71;
+    --red: #e63946;
+    --yellow: #f39c12;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Roboto Condensed', sans-serif;
+    min-height: 100vh;
+  }
+  /* NOISE OVERLAY */
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:9999;
+    opacity:0.4;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 100%);
+    border-bottom: 3px solid var(--accent);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top:0;
+    z-index: 100;
+  }
+  .logo-badge {
+    width: 48px; height: 48px;
+    background: var(--accent);
+    clip-path: polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700; font-size: 18px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .header-title h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .header-title p {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .header-score {
+    margin-left: auto;
+    text-align: right;
+  }
+  .score-val {
+    font-family: 'Oswald', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .score-label { font-size: 10px; color: var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+  /* MAIN LAYOUT */
+  .app { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+
+  /* CATEGORY FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 18px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 12px 24px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all .2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* PROGRESS */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .progress-bar-outer {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px;
+    transition: width .4s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-text { font-size: 12px; color: var(--muted); min-width:60px; text-align:right; }
+
+  /* QUESTION CARD */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    padding: 28px 28px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    animation: slideIn .3s ease;
+  }
+  @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+  .q-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .q-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    background: var(--border);
+    color: var(--muted);
+    border-radius: 2px;
+  }
+  .q-badge.server { background: rgba(230,57,70,.15); color: #ff6b7a; border: 1px solid rgba(230,57,70,.3); }
+  .q-badge.admin { background: rgba(255,107,53,.15); color: var(--accent2); border: 1px solid rgba(255,107,53,.3); }
+  .q-badge.rp { background: rgba(46,204,113,.15); color: #2ecc71; border: 1px solid rgba(46,204,113,.3); }
+  .q-num { font-size: 12px; color: var(--muted); margin-left:auto; }
+  .q-text {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  /* MODE 1: CHOICES */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    background: var(--black);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 13px 18px;
+    text-align: left;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(230,57,70,.07); }
+  .choice-btn.correct { background: rgba(46,204,113,.15); border-color: var(--green); color: var(--green); }
+  .choice-btn.wrong { background: rgba(230,57,70,.15); border-color: var(--red); color: var(--red); }
+  .choice-btn.revealed { border-color: rgba(46,204,113,.4); color: var(--muted); }
+  .choice-letter {
+    width:26px; height:26px; flex-shrink:0;
+    border: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald',sans-serif; font-size:13px; font-weight:700;
+    color:var(--muted);
+  }
+  .choice-btn.correct .choice-letter { border-color:var(--green); color:var(--green); }
+  .choice-btn.wrong .choice-letter { border-color:var(--red); color:var(--red); }
+
+  /* MODE 2: FREE TEXT */
+  .free-input-wrap { display: flex; flex-direction: column; gap: 10px; }
+  .free-input {
+    background: var(--black);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 16px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+    resize: vertical;
+    min-height: 80px;
+  }
+  .free-input:focus { border-color: var(--accent); }
+  .free-input.correct { border-color: var(--green); background: rgba(46,204,113,.05); }
+  .free-input.wrong { border-color: var(--red); background: rgba(230,57,70,.05); }
+
+  /* MODE 3: PUNISHMENT SELECTOR */
+  .punish-wrap { display: flex; flex-direction: column; gap: 12px; }
+  .punish-types { display: flex; gap: 8px; flex-wrap: wrap; }
+  .punish-type-btn {
+    background: var(--black);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .punish-type-btn:hover { border-color: var(--accent2); color: var(--text); }
+  .punish-type-btn.selected { background: rgba(255,107,53,.2); border-color: var(--accent2); color: var(--accent2); }
+  .duration-input {
+    background: var(--black);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 11px 14px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    transition: border-color .2s;
+  }
+  .duration-input:focus { border-color: var(--accent2); }
+  .duration-hint { font-size: 11px; color: var(--muted); letter-spacing: .5px; }
+
+  /* ACTIONS */
+  .q-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 11px 24px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all .15s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #c1121f; }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .btn-secondary:hover { background: #333; }
+  .btn-hint { background: none; border: 1px solid var(--gold); color: var(--gold); clip-path: none; padding: 10px 20px; }
+  .btn-hint:hover { background: rgba(255,215,0,.1); }
+  .btn:disabled { opacity:.4; cursor:not-allowed; }
+
+  /* FEEDBACK */
+  .feedback {
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    border-left: 4px solid;
+    animation: fadeIn .2s;
+  }
+  @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+  .feedback.correct { background: rgba(46,204,113,.1); border-color: var(--green); color: var(--green); }
+  .feedback.wrong { background: rgba(230,57,70,.1); border-color: var(--red); color: #ff8a93; }
+  .feedback.partial { background: rgba(243,156,18,.1); border-color: var(--yellow); color: var(--yellow); }
+  .feedback .correct-ans { font-weight:700; color:#fff; margin-top:4px; display:block; }
+
+  /* HINT BOX */
+  .hint-box {
+    background: rgba(255,215,0,.07);
+    border: 1px solid rgba(255,215,0,.3);
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #cca300;
+    line-height: 1.5;
+    animation: fadeIn .2s;
+  }
+
+  /* RESULTS SCREEN */
+  .results {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .results-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(255,215,0,.3);
+    margin-bottom: 8px;
+  }
+  .results-subtitle { font-size: 16px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px; }
+  .results-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .stat-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 28px;
+    min-width: 100px;
+  }
+  .stat-num { font-family:'Oswald',sans-serif; font-size:36px; font-weight:700; }
+  .stat-num.good { color: var(--green); }
+  .stat-num.bad { color: var(--red); }
+  .stat-num.neutral { color: var(--gold); }
+  .stat-label { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-top:4px; }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+
+  /* RESPONSIVE */
+  @media(max-width:600px) {
+    .tab-btn { padding: 10px 14px; font-size:12px; }
+    .q-text { font-size:15px; }
+    .filters { gap:6px; }
+    .filter-btn { padding:7px 12px; font-size:11px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">BR</div>
+  <div class="header-title">
+    <h1>Black Russia</h1>
+    <p>Тест на знание правил</p>
+  </div>
+  <div class="header-score">
+    <div class="score-val" id="headerScore">0</div>
+    <div class="score-label">Очки</div>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- CATEGORY FILTERS -->
+  <div class="filters">
+    <button class="filter-btn active" data-cat="all" onclick="setCategory('all',this)">Все категории</button>
+    <button class="filter-btn" data-cat="server" onclick="setCategory('server',this)">Правила сервера</button>
+    <button class="filter-btn" data-cat="admin" onclick="setCategory('admin',this)">Правила адм</button>
+    <button class="filter-btn" data-cat="rp" onclick="setCategory('rp',this)">РП Термины</button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="setMode(0,this)">Выбор ответа</button>
+    <button class="tab-btn" onclick="setMode(1,this)">Свой ответ</button>
+    <button class="tab-btn" onclick="setMode(2,this)">Тип наказания</button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 0</div>
+  </div>
+
+  <!-- QUIZ AREA -->
+  <div id="quizArea"></div>
+
+  <!-- RESULTS -->
+  <div class="results hidden" id="resultsScreen">
+    <div class="results-title" id="resultPct">—</div>
+    <div class="results-subtitle">Результат теста</div>
+    <div class="results-stats">
+      <div class="stat-block"><div class="stat-num good" id="rCorrect">0</div><div class="stat-label">Правильно</div></div>
+      <div class="stat-block"><div class="stat-num bad" id="rWrong">0</div><div class="stat-label">Неверно</div></div>
+      <div class="stat-block"><div class="stat-num neutral" id="rPartial">0</div><div class="stat-label">Частично</div></div>
+      <div class="stat-block"><div class="stat-num neutral" id="rScore">0</div><div class="stat-label">Очки</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="restartQuiz()">ПРОЙТИ ЕЩЁ РАЗ</button>
+  </div>
+
+</div>
+
+<script>
+// ===== QUESTION BANK =====
+const QUESTIONS = [
+  // ===== ПРАВИЛА СЕРВЕРА =====
+  {cat:'server', q:'Что такое DM (DeathMatch)?', choices:['Убийство или нанесение урона без IC-причины','Убийство на спавне','Езда по полям','Убийство члена своей фракции'], correct:0, punish:{type:'Jail',duration:'90 минут'}, hint:'Пункт 2.19 правил. DM — намеренное убийство без причины в рамках ролевого процесса.', explain:'DM — убийство или нанесение урона без веской IC-причины. Наказание: Jail 90 минут.', freeKeywords:['убийство без причины','урон без причины','убийство без ic','deathmatch']},
+  {cat:'server', q:'Какое наказание выдаётся за DM (первое нарушение)?', choices:['Warn','Jail 90 минут','Ban 3 дня','Mute 30 минут'], correct:1, punish:{type:'Jail',duration:'90 минут'}, hint:'Проверьте пункт 2.19.', explain:'За DM выдаётся Jail 90 минут.', freeKeywords:['jail 90','90 минут']},
+  {cat:'server', q:'Что такое SK (Spawn Kill)?', choices:['Убийство на территории фракции или у интерьера','Убийство из машины','Убийство без причины','Убийство союзника'], correct:0, punish:{type:'Jail',duration:'60 минут'}, hint:'SK — убийство на титульной территории фракции или месте спавна.', explain:'SK — убийство на месте спавна, титульной территории фракции или у интерьеров. Jail 60 минут.', freeKeywords:['убийство на спавне','убийство у интерьера','spawn kill','спавн килл']},
+  {cat:'server', q:'Что такое TK (Team Kill)?', choices:['Убийство члена своей фракции без IC-причины','Убийство игрока за его смерть','Убийство нескольких игроков','Убийство из транспорта'], correct:0, punish:{type:'Jail',duration:'60 минут'}, hint:'TK — убийство союзника.', explain:'TK — убийство члена своей или союзной фракции без IC-причины. Jail 60 минут (Warn за 2 и более убийства).', freeKeywords:['убийство союзника','убийство члена фракции','team kill']},
+  {cat:'server', q:'Что такое DB (DriveBy)?', choices:['Намеренное убийство с транспорта без IC-причины','Езда по полям','Убийство после смерти','Убийство на спавне'], correct:0, punish:{type:'Jail',duration:'60 минут'}, hint:'DB — стрельба с транспорта без причины.', explain:'DB — намеренное убийство/нанесение урона без IC-причины с транспорта. Jail 60 минут.', freeKeywords:['убийство из машины','стрельба из машины','driveby','драйвбай']},
+  {cat:'server', q:'Что такое MG (MetaGaming)?', choices:['Использование OOC-информации в IC-процессе','Убийство без причины','Убийство после своей смерти','Массовое убийство игроков'], correct:0, punish:{type:'Mute',duration:'30 минут'}, hint:'МГ — когда персонаж знает то, что знает только игрок вне игры.', explain:'MG — использование OOC-информации, которую персонаж не мог получить IC-путём. Mute 30 минут.', freeKeywords:['использование ooc','внеигровая информация','metagaming','метагейминг']},
+  {cat:'server', q:'Какое наказание за DB (первое нарушение)?', choices:['Jail 30 минут','Jail 60 минут','Warn','Ban 1 день'], correct:1, punish:{type:'Jail',duration:'60 минут'}, hint:'Пункт 2.13.', explain:'DB — Jail 60 минут.', freeKeywords:['jail 60','60 минут']},
+  {cat:'server', q:'Что такое Mass DM (TDM)?', choices:['Убийство 3 и более игроков без IC-причины','Убийство союзника','Убийство после смерти','Убийство из транспорта'], correct:0, punish:{type:'Warn / Ban',duration:'3-7 дней'}, hint:'Массовый DM — убийство сразу нескольких игроков без причины.', explain:'Mass DM — убийство 3+ игроков без IC-причины. Warn / Ban 3-7 дней.', freeKeywords:['убийство нескольких','массовый дм','mass dm','масс дм']},
+  {cat:'server', q:'Разрешён ли DM в зоне повышенной криминальной активности?', choices:['Да, полностью','Да, но нельзя трогать непричастных','Нет, полностью запрещён','Только с разрешения администрации'], correct:1, punish:null, hint:'Смотри исключения в пункте 2.19.', explain:'В DM-зонах DM разрешён, но нельзя создавать помехи непричастным игрокам или целенаправленно атаковать случайных.', freeKeywords:['разрешён','можно','но нельзя случайных']},
+  {cat:'server', q:'Что такое NonRP Drive?', choices:['Вождение в невозможных для транспорта условиях','Езда без прав','Убийство водителем','Стрельба из машины'], correct:0, punish:{type:'Jail',duration:'30 минут'}, hint:'Езда на скутере по горам — типичный пример NonRP Drive.', explain:'NonRP Drive — езда в невозможных условиях (скутер по горам, намеренные аварии). Jail 30 минут.', freeKeywords:['вождение в невозможных','езда по горам','nonrp drive']},
+  {cat:'server', q:'Что грозит за покупку/продажу внутриигровой валюты за реальные деньги?', choices:['Warn','Ban 30 дней','PermBan + обнуление аккаунта + ЧСП','Jail 120 минут'], correct:2, punish:{type:'PermBan',duration:'+ обнуление + ЧСП'}, hint:'Это один из самых серьёзных проступков (пункт 2.28).', explain:'PermBan с обнулением аккаунта и занесением в чёрный список проекта.', freeKeywords:['permban','перм бан','обнуление','чсп','чёрный список']},
+  {cat:'server', q:'Что такое "Зелёная зона" (GreenZone)?', choices:['Территория без PvP и насилия','Территория криминала','Место спавна полиции','Зона DM-активности'], correct:0, punish:{type:'Jail',duration:'30-60 минут'}, hint:'ЗЗ — место безопасности.', explain:'Зелёная зона — территория, где запрещено насилие и PvP. Выход из неё в бою для избегания смерти тоже нарушение.', freeKeywords:['без pvp','без насилия','безопасная зона','зз']},
+  {cat:'server', q:'Можно ли рекламировать другие серверы/проекты в игре?', choices:['Да, если не в глобальном чате','Нет, запрещено','Да, всегда','Только в PM'], correct:1, punish:{type:'Ban',duration:'7 дней / PermBan'}, hint:'Пункт 2.31.', explain:'Реклама других проектов запрещена. Ban 7 дней / PermBan при повторном нарушении.', freeKeywords:['нет','запрещено','ban 7','ban 7 дней']},
+  {cat:'server', q:'Что такое "Warn" и каков его основной эффект?', choices:['Временный бан на 1 день','Предупреждение с увольнением из фракции и запретом вступать в неё 10 дней','Блокировка чата на 30 минут','Изоляция в Jail на 60 минут'], correct:1, punish:null, hint:'Warn — серьёзное предупреждение с последствиями для фракционной деятельности.', explain:'Warn — предупреждение. Игрок автоматически увольняется из фракции и не может в неё вступить 10 дней. 3 Warn = Ban 10 дней.', freeKeywords:['предупреждение','увольнение из фракции','10 дней','варн']},
+  {cat:'server', q:'Сколько Warn нужно для автоматической блокировки аккаунта?', choices:['2','3','5','1'], correct:1, punish:null, hint:'Три предупреждения = бан.', explain:'3 предупреждения (Warn) = автоматическая блокировка аккаунта на 10 дней.', freeKeywords:['3','три','3 варна']},
+  {cat:'server', q:'Что такое "Обнуление аккаунта"?', choices:['Удаление только денег','Полный сброс всего имущества, денег, транспорта, недвижимости и т.д.','Временная блокировка на 7 дней','Удаление персонажа'], correct:1, punish:null, hint:'Обнуление — самая жёсткая имущественная санкция.', explain:'Обнуление аккаунта — удаление всех денег, транспорта, недвижимости, бизнеса, семьи, инвентаря и т.д.', freeKeywords:['полный сброс','все деньги','весь транспорт','всё имущество','полная очистка']},
+  {cat:'server', q:'Запрещён ли BunnyHop (БХ) на сервере?', choices:['Да, полностью запрещён','Нет, разрешён','Разрешён только в бою','Только за пределами города'], correct:0, punish:{type:'Jail',duration:'30-60 минут'}, hint:'БХ — прыжковый бег, является нарушением NonRP поведения.', explain:'BunnyHop запрещён как нарушение правил игрового процесса.', freeKeywords:['запрещён','нет','не разрешён','бх запрещён']},
+  {cat:'server', q:'Что грозит за уход от РП (УРП), например выход из игры при аресте?', choices:['Kick','Jail 30 минут / Warn','Mute 60 минут','Ban 3 дня'], correct:1, punish:{type:'Jail',duration:'30 минут'}, hint:'Пункт 2.02.', explain:'УРП — Jail 30 минут или Warn (за повторные нарушения).', freeKeywords:['jail 30','30 минут','warn']},
+  {cat:'server', q:'Разрешён ли ответный DM в целях самообороны?', choices:['Нет, никогда','Да, но нужно иметь видеодоказательство','Да, без ограничений','Только для сотрудников фракций'], correct:1, punish:null, hint:'Смотри примечание пункта 2.19.', explain:'Ответный DM разрешён в целях самозащиты, но при наказании администрацией нужно иметь видеодоказательство.', freeKeywords:['да','разрешён','с доказательством','видеодоказательство']},
+  {cat:'server', q:'Что такое "ЧСП" (Чёрный список проекта)?', choices:['Список читеров','Список заблокированных игроков на всех ресурсах проекта кроме игровых бесед','Список нарушителей правил чата','Список исключённых из фракций'], correct:1, punish:null, hint:'ЧСП — глобальная блокировка на всех ресурсах.', explain:'ЧСП — чёрный список проекта. Игрокам в нём запрещён доступ ко всем ресурсам проекта, кроме игровых бесед.', freeKeywords:['заблокированных','всех ресурсах','глобальная блокировка','чёрный список']},
+  {cat:'server', q:'Что такое PG (PowerGaming)?', choices:['Игра в режиме бога','Изображение из себя героя в невозможных ситуациях (1 без оружия против 5 вооружённых)','Использование багов','Массовое убийство'], correct:1, punish:{type:'Jail',duration:'30 минут'}, hint:'ПГ — нереалистичное поведение персонажа.', explain:'PowerGaming — нереалистичное поведение: например, 1 без оружия атакует 5 вооружённых. Jail 30 минут.', freeKeywords:['нереалистичное','без оружия против','герой','невозможное поведение']},
+
+  // ===== ПРАВИЛА АДМИНИСТРАЦИИ =====
+  {cat:'admin', q:'Может ли администратор владеть игровым бизнесом?', choices:['Да, любым','Нет, владеть бизнесом и АЗС запрещено','Да, только один бизнес','Только если это казино'], correct:1, punish:null, hint:'Пункт 2.04 правил администрации.', explain:'Администратору запрещено владеть игровым бизнесом, АЗС, транспортной или строительной компанией.', freeKeywords:['нет','запрещено','не может','нельзя']},
+  {cat:'admin', q:'Кто является руководителем администрации всего проекта?', choices:['Главный администратор','Специальный администратор','Старший администратор','Куратор'], correct:1, punish:null, hint:'Пункт 1.03 правил администрации.', explain:'Руководителем администрации всего проекта является специальный администратор.', freeKeywords:['специальный администратор','спец адм']},
+  {cat:'admin', q:'Может ли администратор работать на обычных работах сервера?', choices:['Да, в нерабочее время','Да, в любое время','Нет, работы запрещены','Только фракционные задания'], correct:2, punish:null, hint:'Пункт 3.25.', explain:'Администраторам запрещено работать на любых работах в любое время. Фракционные задания тоже под запретом.', freeKeywords:['нет','запрещено','нельзя']},
+  {cat:'admin', q:'Имеет ли администратор право играть на "твинк аккаунте"?', choices:['Нет, никогда','Да, без ограничений','Да, по согласованию с главным администратором и при выполнении норматива','Только после года работы'], correct:2, punish:null, hint:'Пункт 4.01.', explain:'Игра на твинке разрешена при согласовании с главным администратором и при условии выполнения норматива.', freeKeywords:['да','по согласованию','с разрешения','норматив']},
+  {cat:'admin', q:'Что запрещено администратору при игре на твинк аккаунте?', choices:['Участвовать в боях','Иметь оружие','Использовать привилегии администратора','Состоять во фракции'], correct:2, punish:null, hint:'Пункт 4.04.', explain:'На твинке нельзя использовать привилегии администратора и выдавать наказания самостоятельно.', freeKeywords:['использовать привилегии','выдавать наказания','привилегии']},
+  {cat:'admin', q:'Может ли администратор снять наказание, выданное другим администратором?', choices:['Да, всегда','Нет, кроме главного администратора, его заместителя и специальной администрации','Да, если нарушение незначительное','Только с согласия игрока'], correct:1, punish:null, hint:'Пункт 3.02.', explain:'Снимать или заменять наказания другого администратора запрещено. Исключение — ГА, ЗГА и специальная администрация.', freeKeywords:['нет','запрещено','нельзя','кроме га']},
+  {cat:'admin', q:'Сколько дней администратор обязан хранить доказательства нарушений?', choices:['1 день','3 дня','7 дней','30 дней'], correct:1, punish:null, hint:'Пункт 3.07.', explain:'Администратор обязан хранить доказательства нарушений в течение 3 дней.', freeKeywords:['3 дня','трёх дней','три дня']},
+  {cat:'admin', q:'Может ли администратор играть в казино?', choices:['Да, в любое время','Нет, полностью запрещено','Да, с 20:00 до 8:00 при наличии достаточного числа онлайн-администраторов','Только по выходным'], correct:2, punish:null, hint:'Пункт 3.24.', explain:'Разрешено с 20:00 до 8:00, если на сервере достаточно администраторов и все жалобы обработаны.', freeKeywords:['с 20','с 20:00','ночью','20 до 8']},
+  {cat:'admin', q:'В течение какого срока модератор может восстановиться на должность?', choices:['30 дней','90 дней','60 дней','180 дней'], correct:1, punish:null, hint:'Пункт 3.26. Речь идёт о должности модератора и выше.', explain:'Модератор и выше могут восстановиться в течение 90 дней. Младший модератор — только 30 дней.', freeKeywords:['90 дней','девяносто','в течение 90']},
+  {cat:'admin', q:'Разрешено ли администратору перепродавать игровые ценности?', choices:['Да, без ограничений','Нет, категорически запрещено','Разрешено только между коллегами или с одобрения ГА/ЗГА','Только транспорт'], correct:2, punish:null, hint:'Пункт 2.05.', explain:'Перепродажа разрешена только между коллегами или с одобрения главного администратора либо его заместителя.', freeKeywords:['между коллегами','с одобрения','только коллегам']},
+  {cat:'admin', q:'Может ли администратор состоять в семье игроков?', choices:['Да, в любой','Нет, запрещено','Только в качестве рядового члена','Только в семье коллег-администраторов'], correct:1, punish:null, hint:'Пункт 3.29.', explain:'Администраторам запрещено находиться в семьях игроков. ГА может создать собственную семью.', freeKeywords:['нет','запрещено','нельзя']},
+  {cat:'admin', q:'Обязан ли администратор выдавать наказания беспристрастно?', choices:['Нет, только к нарушителям','Да, обязан','Только при наличии жалобы','Только в отношении незнакомых игроков'], correct:1, punish:null, hint:'Пункт 3.11.', explain:'Администратор обязан выдавать наказания беспристрастно — пункт 3.11.', freeKeywords:['да','обязан','должен']},
+  {cat:'admin', q:'Может ли администратор принимать ценности от игроков?', choices:['Да','Нет, без разрешения ГА или ЗГА запрещено','Да, только деньги','Только в виде подарка'], correct:1, punish:null, hint:'Пункт 3.30.', explain:'Администратору запрещено принимать или передавать игровые ценности без разрешения ГА или его заместителя.', freeKeywords:['нет','запрещено','без разрешения']},
+  {cat:'admin', q:'Обязан ли администратор установить дополнительную защиту на аккаунт?', choices:['Нет, по желанию','Да, обязан (почта + секрет-код или Google Authenticator)','Только 2FA','Только привязку телефона'], correct:1, punish:null, hint:'Пункт 3.32.', explain:'Каждый администратор обязан установить защиту: привязку почты и секрет-код или Google Authenticator.', freeKeywords:['да','обязан','должен','google authenticator']},
+  {cat:'admin', q:'Может ли администратор занимать должности на других проектах схожей тематики?', choices:['Да','Нет, запрещено','Только неофициально','Только с разрешения ГА'], correct:1, punish:null, hint:'Пункт 3.19.', explain:'Администратору запрещено занимать должности на проектах со схожей тематикой — пункт 3.19.', freeKeywords:['нет','запрещено','нельзя']},
+  {cat:'admin', q:'Какой ответ НЕДОПУСТИМ администратору в репорте?', choices:['"Работаю по вашей жалобе"','"Слежу"','"Подождите, скоро отвечу"','"Уточните"'], correct:3, punish:null, hint:'Пункт 3.16. Ответы "Слежу", "Мчусь", "Иду" и подобные недопустимы.', explain:'"Уточните", "Слежу", "Иду", "Мчусь" — недопустимые ответы. Правильный: "Работаю по вашей жалобе".', freeKeywords:['уточните','слежу','мчусь','иду']},
+  {cat:'admin', q:'Имеет ли администратор право менять ник во время нахождения на должности?', choices:['Да','Нет, запрещено','Только с разрешения ГА','Один раз за год'], correct:1, punish:null, hint:'Пункт 3.15.', explain:'Занимая должность администратора, запрещено менять игровой ник — пункт 3.15.', freeKeywords:['нет','запрещено','нельзя']},
+  {cat:'admin', q:'Где рассматриваются жалобы от игроков (не в игре)?', choices:['Только в Discord','В специальных разделах форума и официальных Discord-каналах','В личных сообщениях администратору','Только на форуме'], correct:1, punish:null, hint:'Пункт 3.06.', explain:'Все жалобы и обжалования рассматриваются в специально отведённых разделах форума и официальных Discord-каналах.', freeKeywords:['форум','discord','официальных каналах']},
+  {cat:'admin', q:'Что произойдёт, если администратор повторно занимает должность и покидает её без объективных причин?', choices:['Штраф денег','Его аккаунт может быть заблокирован на срок до 30 дней','Выговор','Обнуление аккаунта'], correct:1, punish:{type:'Ban',duration:'до 30 дней'}, hint:'Пункт 3.27.', explain:'Аккаунт может быть заблокирован на срок до 30 дней.', freeKeywords:['ban','бан','30 дней','заблокирован']},
+  {cat:'admin', q:'Разрешено ли администратору создавать транспорт перед другими игроками без причины?', choices:['Да','Нет, запрещено','Разрешено только ночью','Только за городом'], correct:1, punish:null, hint:'Пункт 3.09.', explain:'Запрещено создавать транспорт в людных местах и перед игроками без причины — пункт 3.09.', freeKeywords:['нет','запрещено','нельзя']},
+
+  // ===== РП ТЕРМИНЫ =====
+  {cat:'rp', q:'Расшифруйте аббревиатуру "RK" в значении возвращения на место смерти.', choices:['Revenge Kill','RepeatKill','Return Kill / возвращение на место убийства','Respawn Kill'], correct:2, punish:null, hint:'РК тип 1 — возвращение туда, где тебя убили.', explain:'RK [1] — возвращение на место, где тебя убили.', freeKeywords:['возвращение','return kill','место убийства','место смерти']},
+  {cat:'rp', q:'Что такое "Revenge Kill" (RK тип 2)?', choices:['Убийство команды врага','Убийство игрока за то, что он тебя убил','Возвращение на место смерти','Убийство одного игрока несколько раз'], correct:1, punish:null, hint:'Месть — основная черта этого типа РК.', explain:'Revenge Kill — убийство игрока в отместку за то, что он тебя убил.', freeKeywords:['убийство за смерть','месть','убийство того кто убил']},
+  {cat:'rp', q:'Что такое "Repeat Kill" (RK тип 3)?', choices:['Убийство в первый раз','Убийство одного игрока 2 и более раз','Убийство союзников','Убийство на спавне'], correct:1, punish:null, hint:'Повторное убийство — ключевое слово.', explain:'Repeat Kill — убийство одного и того же игрока 2 и более раз.', freeKeywords:['убийство одного несколько','повторное убийство','2 раза','дважды']},
+  {cat:'rp', q:'Что означает аббревиатура "ФР"?', choices:['Фракционный режим','Баг с быстрой перезарядкой','Фантомный режим','Фиктивный репорт'], correct:1, punish:null, hint:'ФР — это читерский баг со скоростью перезарядки оружия.', explain:'ФР — баг с быстрой перезарядкой оружия.', freeKeywords:['быстрая перезарядка','баг перезарядки','перезарядка']},
+  {cat:'rp', q:'Что такое "ФМ"?', choices:['Фракционный мир','Баг с быстрым перемещением','Фантомный мод','Фиктивные меры'], correct:1, punish:null, hint:'ФМ — баг движения.', explain:'ФМ — баг с быстрым перемещением персонажа.', freeKeywords:['быстрое перемещение','баг перемещения','перемещение']},
+  {cat:'rp', q:'Что такое "Транслит"?', choices:['Перевод правил','Написание русских слов английскими буквами (privet, poka)','Язык администрации','Система транспорта'], correct:1, punish:null, hint:'privet, poka, kak dela — это транслит.', explain:'Транслит — написание русских слов латинскими буквами, например "privet" вместо "привет".', freeKeywords:['русские слова английскими','латинскими буквами','английскими буквами','privet']},
+  {cat:'rp', q:'Что такое "IC" в контексте РП?', choices:['Игровое сообщение вне чата','In Character — действия и слова персонажа внутри ролевого процесса','Internet Connection','Item Code'], correct:1, punish:null, hint:'IC — "в характере персонажа".', explain:'IC (In Character) — всё, что происходит от лица персонажа внутри ролевого игрового процесса.', freeKeywords:['in character','от лица персонажа','внутри рп','игровое']},
+  {cat:'rp', q:'Что такое "OOC"?', choices:['Out of Character — общение вне ролевого процесса','Официальный отдел чата','Особый орден охраны','Один из чатов'], correct:0, punish:null, hint:'OOC — общение вне роли.', explain:'OOC (Out of Character) — общение вне ролевого процесса, от лица игрока, а не персонажа.', freeKeywords:['out of character','вне роли','вне персонажа','от игрока']},
+  {cat:'rp', q:'Что такое "ЦК" (ролевое убийство)?', choices:['Частичное ранение','Ролевое убийство персонажа (запрещено на сервере)','Цифровой кодекс','Целевая корректировка'], correct:1, punish:null, hint:'ЦК — запрещённое действие на сервере BR.', explain:'ЦК — ролевое убийство персонажа. На сервере Black Russia запрещено.', freeKeywords:['ролевое убийство','смерть персонажа','запрещено на сервере']},
+  {cat:'rp', q:'Что такое "ЕПП" (Езда по полям)?', choices:['Экстремальные прыжки на машинах','Езда на транспорте по полям вне разрешённых условий','Европейский парк путешествий','Езда по платным полосам'], correct:1, punish:{type:'Jail',duration:'60 минут'}, hint:'ЕПП — нарушение правил вождения по полям.', explain:'ЕПП — езда по полям на транспорте, не предназначенном для этого (не внедорожник/кросс-мотоцикл). Jail 60 минут.', freeKeywords:['езда по полям','поле','вне дороги']},
+  {cat:'rp', q:'Что такое "ФК" (FastConnect)?', choices:['Быстрый коннект — быстрое переподключение к серверу с целью обхода правил','Фракционный контракт','Фиксированный канал','Финансовый кодекс'], correct:0, punish:null, hint:'ФК — быстрый выход и вход на сервер.', explain:'FastConnect — быстрое переподключение к серверу, часто используется для обхода наказаний или игровых ситуаций.', freeKeywords:['быстрое переподключение','переподключение','выход и вход']},
+
+  // === ДОПОЛНИТЕЛЬНЫЕ ВОПРОСЫ ===
+  {cat:'server', q:'Запрещено ли нарушать нормы RolePlay процесса (ездить на крышах авто, бегать по столам казино)?', choices:['Да, Jail 30 минут','Нет, разрешено','Только Warn','Ban 1 день'], correct:0, punish:{type:'Jail',duration:'30 минут'}, hint:'Пункт 2.01.', explain:'Нарушение норм RolePlay процесса — Jail 30 минут.', freeKeywords:['jail 30','30 минут']},
+  {cat:'server', q:'Что грозит за аморальные действия сексуального характера без согласия игрока?', choices:['Mute 60 минут','Jail 30 минут / Warn','Ban 7 дней','Kick'], correct:1, punish:{type:'Jail',duration:'30 минут'}, hint:'Пункт 2.08.', explain:'Jail 30 минут / Warn за аморальные действия сексуального характера без обоюдного согласия.', freeKeywords:['jail 30','warn','30 минут']},
+  {cat:'server', q:'Что грозит за OOC-угрозы жизни или здоровью игрока?', choices:['Mute 120 минут','Warn','Ban 7-15 дней (возможно PermBan по решению ГА)','Jail 60 минут'], correct:2, punish:{type:'Ban',duration:'7-15 дней / PermBan'}, hint:'Пункт 2.37.', explain:'OOC-угрозы жизни — Ban 7-15 дней. По решению ГА возможен PermBan.', freeKeywords:['ban','бан','7','15','permban']},
+  {cat:'server', q:'Можно ли использовать рабочий транспорт в личных целях?', choices:['Да','Нет, Jail 30 минут','Только в нерабочее время','С разрешения начальника фракции'], correct:1, punish:{type:'Jail',duration:'30 минут'}, hint:'Пункт 2.11.', explain:'Использование рабочего/фракционного транспорта в личных целях — Jail 30 минут.', freeKeywords:['нет','jail 30','запрещено']},
+  {cat:'server', q:'Запрещено ли распространять личную информацию других игроков?', choices:['Нет','Да, Ban 15-30 дней / PermBan + ЧСП','Только Warn','Mute 120 минут'], correct:1, punish:{type:'Ban',duration:'15-30 дней / PermBan + ЧСП'}, hint:'Пункт 2.38.', explain:'Распространение личных данных игроков без их согласия — Ban 15-30 дней / PermBan + ЧСП.', freeKeywords:['ban','бан','15','30','permban','чсп']},
+  {cat:'admin', q:'Обязан ли администратор знать все правила серверов и команды?', choices:['Только правила','Нет','Да, обязан','Только команды'], correct:2, punish:null, hint:'Пункт 3.12.', explain:'Администратор обязан знать все правила серверов и используемые команды — пункт 3.12.', freeKeywords:['да','обязан','должен']},
+  {cat:'rp', q:'Что такое "ГМ" (GodMood)?', choices:['Геймод','Режим Бога — нечестное преимущество неуязвимости','Гибридный мод','Групповой мод'], correct:1, punish:null, hint:'ГМ — читерский режим неуязвимости.', explain:'ГМ (GodMood) — режим Бога, читерская неуязвимость. Является грубым нарушением.', freeKeywords:['режим бога','неуязвимость','чит']},
+  {cat:'rp', q:'Что такое "СХ" (SpeedHack)?', choices:['Системный хак','Чит на быстрое передвижение','Специальный хаб','Сервер хак'], correct:1, punish:null, hint:'СХ — скоростной чит.', explain:'SpeedHack — чит-программа для быстрого передвижения. Запрещена — Ban 15-30 дней / PermBan.', freeKeywords:['чит','скорость','быстрое передвижение']},
+];
+
+// ===== APP STATE =====
+let mode = 0; // 0=choices, 1=free, 2=punish
+let category = 'all';
+let questions = [];
+let current = 0;
+let score = 0;
+let correct = 0;
+let wrong = 0;
+let partial = 0;
+let answered = false;
+let hintShown = false;
+
+const PUNISH_TYPES = ['Jail','Mute','Warn','Ban','PermBan','Kick'];
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function setCategory(cat, btn) {
+  category = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  restartQuiz();
+}
+
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  restartQuiz();
+}
+
+function restartQuiz() {
+  let pool = category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.cat === category);
+  // Filter by mode: mode 2 needs punish data
+  if (mode === 2) pool = pool.filter(q => q.punish);
+  questions = shuffle(pool);
+  current = 0; score = 0; correct = 0; wrong = 0; partial = 0;
+  answered = false; hintShown = false;
+  document.getElementById('headerScore').textContent = '0';
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderQuestion();
+}
+
+function updateProgress() {
+  const pct = questions.length ? (current / questions.length) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = current + ' / ' + questions.length;
+}
+
+function catBadge(cat) {
+  if (cat === 'server') return '<span class="q-badge server">Правила сервера</span>';
+  if (cat === 'admin') return '<span class="q-badge admin">Правила адм.</span>';
+  return '<span class="q-badge rp">РП Термин</span>';
+}
+
+function renderQuestion() {
+  updateProgress();
+  if (current >= questions.length) { showResults(); return; }
+  const q = questions[current];
+  answered = false; hintShown = false;
+  const area = document.getElementById('quizArea');
+
+  if (mode === 0) renderChoices(q, area);
+  else if (mode === 1) renderFree(q, area);
+  else renderPunish(q, area);
+}
+
+function renderChoices(q, area) {
+  const shuffledChoices = q.choices.map((c,i) => ({text:c, idx:i}));
+  const letters = ['А','Б','В','Г'];
+  area.innerHTML = `
+    <div class="q-card">
+      <div class="q-meta">${catBadge(q.cat)}<span class="q-num">Вопрос ${current+1} из ${questions.length}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="choices" id="choicesWrap">
+        ${shuffledChoices.map((c,i)=>`
+          <button class="choice-btn" id="cb${i}" onclick="checkChoice(${c.idx}, ${i}, ${q.correct}, this)">
+            <span class="choice-letter">${letters[i]}</span>${c.text}
+          </button>`).join('')}
+      </div>
+      <div id="feedback"></div>
+      <div id="hintBox"></div>
+      <div class="q-actions">
+        <button class="btn btn-hint" onclick="showHint()">💡 Подсказка</button>
+        <button class="btn btn-primary hidden" id="nextBtn" onclick="nextQ()">СЛЕДУЮЩИЙ →</button>
+      </div>
+    </div>`;
+}
+
+function checkChoice(selectedIdx, btnI, correctIdx, btn) {
+  if (answered) return;
+  answered = true;
+  const btns = document.querySelectorAll('.choice-btn');
+  const q = questions[current];
+  btns.forEach((b,i) => {
+    b.disabled = true;
+    const origIdx = parseInt(b.getAttribute('onclick').split(',')[0].replace('checkChoice(',''));
+    if (origIdx === correctIdx) b.classList.add('correct');
+  });
+  const fb = document.getElementById('feedback');
+  if (selectedIdx === correctIdx) {
+    btn.classList.add('correct');
+    const pts = hintShown ? 5 : 10;
+    score += pts; correct++;
+    document.getElementById('headerScore').textContent = score;
+    fb.innerHTML = `<div class="feedback correct">✓ Верно! +${pts} очков${hintShown?' (с подсказкой)':''}</div>`;
+  } else {
+    btn.classList.add('wrong');
+    wrong++;
+    fb.innerHTML = `<div class="feedback wrong">✗ Неверно.<span class="correct-ans">Правильный ответ: ${q.choices[correctIdx]}</span><small style="color:#888;margin-top:6px;display:block">${q.explain}</small></div>`;
+  }
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function renderFree(q, area) {
+  area.innerHTML = `
+    <div class="q-card">
+      <div class="q-meta">${catBadge(q.cat)}<span class="q-num">Вопрос ${current+1} из ${questions.length}</span></div>
+      <div class="q-text">${q.q}</div>
+      <div class="free-input-wrap">
+        <textarea class="free-input" id="freeInput" placeholder="Введите ваш ответ..."></textarea>
+      </div>
+      <div id="feedback"></div>
+      <div id="hintBox"></div>
+      <div class="q-actions">
+        <button class="btn btn-hint" onclick="showHint()">💡 Подсказка</button>
+        <button class="btn btn-primary" onclick="checkFree()">ПРОВЕРИТЬ</button>
+        <button class="btn btn-secondary hidden" id="nextBtn" onclick="nextQ()">СЛЕДУЮЩИЙ →</button>
+      </div>
+    </div>`;
+}
+
+function checkFree() {
+  if (answered) return;
+  const q = questions[current];
+  const val = document.getElementById('freeInput').value.trim().toLowerCase();
+  if (!val) return;
+  answered = true;
+  document.getElementById('freeInput').disabled = true;
+  const fb = document.getElementById('feedback');
+  const keywords = q.freeKeywords || [];
+  const matched = keywords.some(kw => val.includes(kw));
+  if (matched) {
+    const pts = hintShown ? 5 : 10;
+    score += pts; correct++;
+    document.getElementById('headerScore').textContent = score;
+    document.getElementById('freeInput').classList.add('correct');
+    fb.innerHTML = `<div class="feedback correct">✓ Засчитано! +${pts} очков${hintShown?' (с подсказкой)':''}<span class="correct-ans">Эталонный ответ: ${q.explain}</span></div>`;
+  } else {
+    wrong++;
+    document.getElementById('freeInput').classList.add('wrong');
+    fb.innerHTML = `<div class="feedback wrong">✗ Неточно.<span class="correct-ans">Правильный ответ: ${q.explain}</span></div>`;
+  }
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function renderPunish(q, area) {
+  area.innerHTML = `
+    <div class="q-card">
+      <div class="q-meta">${catBadge(q.cat)}<span class="q-num">Вопрос ${current+1} из ${questions.length}</span></div>
+      <div class="q-text">Какое наказание выдаётся за: <strong>${q.q.replace('Какое наказание','').replace('?','').trim()}</strong><br><br><em style="font-size:14px;color:var(--muted)">Выберите тип наказания и укажите срок/значение</em></div>
+      <div class="punish-wrap">
+        <div class="punish-types" id="punishTypes">
+          ${PUNISH_TYPES.map(t=>`<button class="punish-type-btn" data-pt="${t}" onclick="selectPunishType(this,'${t}')">${t}</button>`).join('')}
+        </div>
+        <input type="text" class="duration-input" id="durationInput" placeholder="Укажите срок / значение (например: 90 минут, 7 дней...)">
+        <div class="duration-hint">Тип: <span id="selectedType" style="color:var(--accent2)">не выбран</span></div>
+      </div>
+      <div id="feedback"></div>
+      <div id="hintBox"></div>
+      <div class="q-actions">
+        <button class="btn btn-hint" onclick="showHint()">💡 Подсказка</button>
+        <button class="btn btn-primary" onclick="checkPunish()">ПРОВЕРИТЬ</button>
+        <button class="btn btn-secondary hidden" id="nextBtn" onclick="nextQ()">СЛЕДУЮЩИЙ →</button>
+      </div>
+    </div>`;
+}
+
+let selectedPunishType = '';
+function selectPunishType(btn, type) {
+  document.querySelectorAll('.punish-type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedPunishType = type;
+  document.getElementById('selectedType').textContent = type;
+}
+
+function checkPunish() {
+  if (answered) return;
+  const q = questions[current];
+  const pdata = q.punish;
+  const durationInput = document.getElementById('durationInput').value.trim().toLowerCase();
+  if (!selectedPunishType) { alert('Выберите тип наказания!'); return; }
+  answered = true;
+  document.getElementById('durationInput').disabled = true;
+  document.querySelectorAll('.punish-type-btn').forEach(b => b.disabled = true);
+
+  const correctType = pdata.type.toLowerCase().split('/')[0].trim();
+  const correctDur = pdata.duration.toLowerCase();
+  const typeMatch = selectedPunishType.toLowerCase() === correctType;
+
+  // Extract numbers from both strings
+  const inputNums = (durationInput.match(/\d+/g) || []).map(Number);
+  const correctNums = (correctDur.match(/\d+/g) || []).map(Number);
+  const durMatch = inputNums.length > 0 && correctNums.some(cn => inputNums.includes(cn));
+
+  const fb = document.getElementById('feedback');
+  if (typeMatch && durMatch) {
+    const pts = hintShown ? 5 : 10;
+    score += pts; correct++;
+    document.getElementById('headerScore').textContent = score;
+    fb.innerHTML = `<div class="feedback correct">✓ Точно верно! +${pts} очков</div>`;
+  } else if (typeMatch || durMatch) {
+    const pts = 4;
+    score += pts; partial++;
+    document.getElementById('headerScore').textContent = score;
+    fb.innerHTML = `<div class="feedback partial">◑ Частично верно (+${pts} очков)<span class="correct-ans">Правильно: ${pdata.type} — ${pdata.duration}</span></div>`;
+  } else {
+    wrong++;
+    fb.innerHTML = `<div class="feedback wrong">✗ Неверно.<span class="correct-ans">Правильно: ${pdata.type} — ${pdata.duration}</span></div>`;
+  }
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function showHint() {
+  const q = questions[current];
+  if (hintShown) return;
+  hintShown = true;
+  document.getElementById('hintBox').innerHTML = `<div class="hint-box">💡 <strong>Подсказка:</strong> ${q.hint}</div>`;
+}
+
+function nextQ() {
+  current++;
+  selectedPunishType = '';
+  renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('quizArea').classList.add('hidden');
+  const rs = document.getElementById('resultsScreen');
+  rs.classList.remove('hidden');
+  const total = correct + wrong + partial;
+  const pct = total ? Math.round(((correct + partial*0.5) / total) * 100) : 0;
+  document.getElementById('resultPct').textContent = pct + '%';
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rPartial').textContent = partial;
+  document.getElementById('rScore').textContent = score;
+}
+
+// INIT
+restartQuiz();
+</script>
+</body>
+</html>
