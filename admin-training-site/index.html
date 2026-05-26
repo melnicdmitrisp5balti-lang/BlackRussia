@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Russia - Подготовка Администрации</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">BLACK RUSSIA</h1>
+                <p class="subtitle">Система подготовки администрации</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <aside class="sidebar">
+                <div class="category-selector">
+                    <h3>📋 Категория</h3>
+                    <button class="category-btn active" data-category="all">🎯 Все вопросы</button>
+                    <button class="category-btn" data-category="server">📋 Правила сервера</button>
+                    <button class="category-btn" data-category="admin">👨‍⚖️ Правила админ.</button>
+                    <button class="category-btn" data-category="rp">🎭 РП Термины</button>
+                </div>
+
+                <div class="mode-selector">
+                    <h3>🎮 Режим</h3>
+                    <button class="mode-btn active" data-mode="multiple">✓ Выбор ответов</button>
+                    <button class="mode-btn" data-mode="text">✎ Текст ответ</button>
+                    <button class="mode-btn" data-mode="punishment">⚖️ Наказание</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item"><span>Вопросов:</span> <strong id="total-questions">0</strong></div>
+                    <div class="stat-item"><span>Ответлено:</span> <strong id="answered-count">0</strong></div>
+                    <div class="stat-item"><span>Правильно:</span> <strong id="correct-count">0</strong></div>
+                    <div class="stat-item"><span>Процент:</span> <strong id="percent">0%</strong></div>
+                </div>
+
+                <button class="reset-btn" id="reset-btn">🔄 Начать заново</button>
+            </aside>
+
+            <section class="content">
+                <div class="navigation">
+                    <button id="prev-btn" class="nav-btn">← Предыдущий</button>
+                    <div class="question-counter"><span id="current-question">0</span> / <span id="total-questions-nav">0</span></div>
+                    <button id="next-btn" class="nav-btn">Следующий →</button>
+                </div>
+
+                <div class="questions-container">
+                    <div id="question-area" class="question-area">
+                        <div class="empty-state"><p>Выберите категорию для начала</p></div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+                    <button id="show-results" class="results-btn">Показать результаты</button>
+                </div>
+            </section>
+        </main>
+
+        <div id="results-modal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="document.getElementById('results-modal').classList.remove('active')">&times;</button>
+                <h2>Результаты</h2>
+                <div id="results-content" class="results-content"></div>
+                <button class="close-results-btn" onclick="document.getElementById('results-modal').classList.remove('active')">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="rules-modal" class="modal">
+            <div class="modal-content large">
+                <button class="close-modal" onclick="document.getElementById('rules-modal').classList.remove('active')">&times;</button>
+                <h2>Информация о правиле</h2>
+                <div id="rules-content" class="rules-content"></div>
+                <button onclick="document.getElementById('rules-modal').classList.remove('active')">Закрыть</button>
+            </div>
+        </div>
+
+        <div id="hint-modal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="document.getElementById('hint-modal').classList.remove('active')">&times;</button>
+                <h2>Подсказка</h2>
+                <div id="hint-content" class="hint-content"></div>
+                <button onclick="document.getElementById('hint-modal').classList.remove('active')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
